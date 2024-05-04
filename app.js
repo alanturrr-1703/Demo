@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 
 // Create an instance of Express
 const app = express();
-const PORT = 3000;
+const PORT = 8080;
 
 // Initialize an array to store items
 let items = [];
