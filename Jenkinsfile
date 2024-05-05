@@ -1,23 +1,37 @@
 pipeline {
     agent any
+
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                echo 'Building the project...'
-                // Add build steps here (e.g., npm install, npm test)
+                // Checkout source code from Git repository
+                git 'https://github.com/alanturrr-1703/Demo.git'
             }
         }
-        stage('Test') {
+        
+        stage('Install Dependencies') {
             steps {
-                echo 'Running tests...'
-                // Add test steps here
+                // Install Node.js dependencies using npm
+                sh 'npm install'
             }
         }
-        stage('Deploy') {
+        
+        stage('Run Tests') {
             steps {
-                echo 'Deploying the project...'
-                // Add deployment steps here
+                // Run tests using Jest
+                sh 'npm test'
             }
+        }
+    }
+    
+    post {
+        success {
+            // If the build succeeds, print success message
+            echo 'CI pipeline succeeded!'
+        }
+        failure {
+            // If the build fails, print failure message
+            echo 'CI pipeline failed!'
         }
     }
 }
