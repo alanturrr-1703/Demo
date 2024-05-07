@@ -1,10 +1,15 @@
 {
-  "dependencies": {
-    "body-parser": "^1.20.2",
-    "express": "^4.19.2"
+  "name": "my-node-app",
+  "version": "1.0.0",
+  "description": "My Node.js application",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
-    "supertest": "^7.0.0"
+    "jest": "^27.4.7"
+  },
+  "jest": {
+    "coverageReporters": ["text", "lcov"]
   }
 }
