@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const itemsRouter = require('./routes/items');
+module.exports = app;
 
 // Middleware
 app.use(express.json()); // Parse JSON request bodies
