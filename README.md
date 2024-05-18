@@ -35,3 +35,4 @@ The application code is version controlled using Git and hosted on GitHub. This 
 ## Purpose
 
 This application can serve as a starting point for building more complex APIs or as a learning resource for developers interested in Node.js and Express.js. It demonstrates fundamental concepts such as routing, middleware, request handling, and data manipulation.
+To check triggers.
