@@ -52,22 +52,27 @@ pipeline {
 
         stage('Deploy to Staging') {
             steps {
-                {
-                    bat '''
-                        docker-compose -f docker-compose.yml up
-                        docker run -p 80:80 alanturrr1703/demo-app
-                    '''
+                {   
+                    script {
+                    // Navigate to the directory containing docker-compose.yml
+                        dir('./') {
+                        // Run Docker Compose with production environment file
+                        sh 'docker-compose -f docker-compose.yml up'
+                        }
+
+                    }
                 }
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                {
-                    bat '''
-                        docker-compose -f docker-compose.yml up
-                        docker run -p 80:80 alanturrr1703/demo-app
-                    '''
+                script {
+                    // Navigate to the directory containing docker-compose.yml
+                    dir('./') {
+                        // Run Docker Compose with production environment file
+                        sh 'docker-compose -f docker-compose.yml up'
+                    }
                 }
             }
         }
