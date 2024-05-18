@@ -64,12 +64,12 @@ pipeline {
 
         stage('Deploy to Production') {
             steps {
-                input message: 'Deploy to production?', ok: 'Deploy'
-                withCredentials([sshUserPrivateKey(credentialsId: 'production-server-ssh', keyFileVariable: 'KEYFILE')]) {
-                    bat '''
-                        docker pull alanturrr1703/demo-app
-                        ssh -i %KEYFILE% user@production-server "docker run -d -p 80:80 alanturrr1703/demo-app"
-                    '''
+                script {
+                    // Navigate to the directory containing docker-compose.yml
+                    dir('./') {
+                        // Run Docker Compose with production environment file
+                        bat 'docker-compose --env-file .env.production up -d'
+                    }
                 }
             }
         }
