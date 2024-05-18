@@ -10,16 +10,26 @@ pipeline {
                 git 'https://github.com/alanturrr-1703/Demo.git'
             }
         }
-
+        
         stage('Install Dependencies') {
             steps {
                 bat 'npm install'
             }
         }
-
+        
         stage('Run Tests') {
             steps {
                 bat 'npm test'
+            }
+        }
+
+        stage('Verify Dockerfile') {
+            steps {
+                script {
+                    if (!fileExists('Dockerfile')) {
+                        error("Dockerfile not found in the workspace.")
+                    }
+                }
             }
         }
 
@@ -31,11 +41,10 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-                        bat 'docker tag alanturrr1703/demo-app alanturrr1703/demo-app'
-                        bat 'docker push alanturrr1703/demo-app'
-                    }
+                withCredentials([string(credentialsId: 'dockerhub-credentials', variable: 'DOCKERHUB_PASSWORD')]) {
+                    bat 'echo %DOCKERHUB_PASSWORD% | docker login -u alanturrr1703 --Harshit@1703'
+                    bat 'docker tag alanturrr1703/demo-app alanturrr1703/demo-app'
+                    bat 'docker push alanturrr1703/demo-app'
                 }
             }
         }
@@ -63,7 +72,7 @@ pipeline {
             }
         }
     }
-
+    
     post {
         success {
             echo 'CI/CD pipeline succeeded!'
