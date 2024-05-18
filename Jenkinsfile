@@ -10,13 +10,13 @@ pipeline {
                 git 'https://github.com/alanturrr-1703/Demo.git'
             }
         }
-        
+
         stage('Install Dependencies') {
             steps {
                 bat 'npm install'
             }
         }
-        
+
         stage('Run Tests') {
             steps {
                 bat 'npm test'
@@ -25,16 +25,17 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t demo-app .'
+                bat 'docker build -t alanturrr1703/demo-app .'
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                withCredentials([string(credentialsId: 'dockerhub-credentials', variable: 'DOCKERHUB_PASSWORD')]) {
-                    bat 'echo %DOCKERHUB_PASSWORD% | docker login -u alanturrr1703 --Harshit@1703'
-                    bat 'docker tag demo-app your-dockerhub-username/demo-app'
-                    bat 'docker push your-dockerhub-username/demo-app'
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
+                        bat 'docker tag alanturrr1703/demo-app alanturrr1703/demo-app'
+                        bat 'docker push alanturrr1703/demo-app'
+                    }
                 }
             }
         }
@@ -43,8 +44,8 @@ pipeline {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-ssh', keyFileVariable: 'KEYFILE')]) {
                     bat '''
-                        docker pull your-dockerhub-username/demo-app
-                        ssh -i %KEYFILE% user@staging-server "docker run -d -p 80:80 your-dockerhub-username/demo-app"
+                        docker pull alanturrr1703/demo-app
+                        ssh -i %KEYFILE% user@staging-server "docker run -d -p 80:80 alanturrr1703/demo-app"
                     '''
                 }
             }
@@ -55,14 +56,14 @@ pipeline {
                 input message: 'Deploy to production?', ok: 'Deploy'
                 withCredentials([sshUserPrivateKey(credentialsId: 'production-server-ssh', keyFileVariable: 'KEYFILE')]) {
                     bat '''
-                        docker pull your-dockerhub-username/demo-app
-                        ssh -i %KEYFILE% user@production-server "docker run -d -p 80:80 your-dockerhub-username/demo-app"
+                        docker pull alanturrr1703/demo-app
+                        ssh -i %KEYFILE% user@production-server "docker run -d -p 80:80 alanturrr1703/demo-app"
                     '''
                 }
             }
         }
     }
-    
+
     post {
         success {
             echo 'CI/CD pipeline succeeded!'
