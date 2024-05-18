@@ -52,7 +52,7 @@ pipeline {
 
         stage('Deploy to Staging') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-ssh', keyFileVariable: 'KEYFILE')]) {
+                {
                     bat '''
                         docker-compose -f docker-compose.yml up
                         docker run -p 80:80 alanturrr1703/demo-app
@@ -63,8 +63,7 @@ pipeline {
 
         stage('Deploy to Production') {
             steps {
-                input message: 'Deploy to production?', ok: 'Deploy'
-                withCredentials([sshUserPrivateKey(credentialsId: 'production-server-ssh', keyFileVariable: 'KEYFILE')]) {
+                {
                     bat '''
                         docker-compose -f docker-compose.yml up
                         docker run -p 80:80 alanturrr1703/demo-app
