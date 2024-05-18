@@ -4,6 +4,6 @@ services:
   app:
     image: alanturrr1703/demo-app:latest
     ports:
-      - "3002"
+      - "80:80"
     environment:
       - NODE_ENV=production
