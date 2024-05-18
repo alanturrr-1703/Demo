@@ -62,7 +62,6 @@ pipeline {
 
         stage('Deploy to Production') {
             steps {
-                input message: 'Deploy to production?', ok: 'Deploy'
                 withCredentials([sshUserPrivateKey(credentialsId: 'production-server-ssh', keyFileVariable: 'KEYFILE')]) {
                     bat '''
                         docker pull alanturrr1703/demo-app
