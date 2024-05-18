@@ -52,27 +52,23 @@ pipeline {
 
         stage('Deploy to Staging') {
             steps {
-                {   
-                    script {
-                    // Navigate to the directory containing docker-compose.yml
-                        dir('./') {
-                        // Run Docker Compose with production environment file
-                        sh 'docker-compose -f docker-compose.yml up'
-                        }
-
-                    }
+                withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-ssh', keyFileVariable: 'KEYFILE')]) {
+                    bat '''
+                        docker pull alanturrr1703/demo-app
+                        ssh -i %KEYFILE% user@staging-server "docker run -d -p 80:80 alanturrr1703/demo-app"
+                    '''
                 }
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                script {
-                    // Navigate to the directory containing docker-compose.yml
-                    dir('./') {
-                        // Run Docker Compose with production environment file
-                        sh 'docker-compose -f docker-compose.yml up'
-                    }
+                input message: 'Deploy to production?', ok: 'Deploy'
+                withCredentials([sshUserPrivateKey(credentialsId: 'production-server-ssh', keyFileVariable: 'KEYFILE')]) {
+                    bat '''
+                        docker pull alanturrr1703/demo-app
+                        ssh -i %KEYFILE% user@production-server "docker run -d -p 80:80 alanturrr1703/demo-app"
+                    '''
                 }
             }
         }
