@@ -52,11 +52,12 @@ pipeline {
 
         stage('Deploy to Staging') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-ssh', keyFileVariable: 'KEYFILE')]) {
-                    bat '''
-                        docker pull alanturrr1703/demo-app
-                        ssh -i %KEYFILE% user@staging-server "docker run -d -p 80:80 alanturrr1703/demo-app"
-                    '''
+                script {
+                    // Navigate to the directory containing docker-compose.yml
+                    dir('./') {
+                        // Run Docker Compose with production environment file
+                        bat 'docker-compose --env-file .env.production up -d'
+                    }
                 }
             }
         }
