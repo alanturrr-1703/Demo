@@ -55,7 +55,7 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-ssh', keyFileVariable: 'KEYFILE')]) {
                     bat '''
                         docker-compose -f docker-compose.yml up
-                        ssh -i %KEYFILE% user@staging-server "docker run -p 80:80 alanturrr1703/demo-app"
+                        docker run -p 80:80 alanturrr1703/demo-app
                     '''
                 }
             }
@@ -67,7 +67,7 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'production-server-ssh', keyFileVariable: 'KEYFILE')]) {
                     bat '''
                         docker-compose -f docker-compose.yml up
-                        ssh -i %KEYFILE% user@production-server "docker run -p 80:80 alanturrr1703/demo-app"
+                        docker run -p 80:80 alanturrr1703/demo-app
                     '''
                 }
             }
