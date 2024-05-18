@@ -4,24 +4,19 @@ pipeline {
         pollSCM('*/5 * * * *')
     }
 
-    environment {
-        DOCKER_IMAGE = 'alanturrr1703/demo-app'
-        DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
-    }
-
     stages {
         stage('Checkout') {
             steps {
                 git 'https://github.com/alanturrr-1703/Demo.git'
             }
         }
-
+        
         stage('Install Dependencies') {
             steps {
                 bat 'npm install'
             }
         }
-
+        
         stage('Run Tests') {
             steps {
                 bat 'npm test'
@@ -40,17 +35,16 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat "docker build -t ${DOCKER_IMAGE}:${env.BUILD_ID} ."
+                bat 'docker build -t alanturrr1703/demo-app .'
             }
         }
 
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
-                        bat "docker tag ${DOCKER_IMAGE}:${env.BUILD_ID} ${DOCKER_IMAGE}:latest"
-                        bat "docker push ${DOCKER_IMAGE}:${env.BUILD_ID}"
-                        bat "docker push ${DOCKER_IMAGE}:latest"
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
+                        bat 'docker tag alanturrr1703/demo-app alanturrr1703/demo-app'
+                        bat 'docker push alanturrr1703/demo-app'
                     }
                 }
             }
@@ -59,12 +53,10 @@ pipeline {
         stage('Deploy to Staging') {
             steps {
                 script {
+                    // Navigate to the directory containing docker-compose.yml
                     dir('./') {
-                        // Ensure to stop any running container for staging before deploying
-                        bat """
-                            docker-compose -f docker-compose.staging.yml down || true
-                            docker-compose -f docker-compose.staging.yml up -d
-                        """
+                        // Run Docker Compose with production environment file
+                        bat 'docker-compose -f docker-compose.yml up'
                     }
                 }
             }
@@ -72,20 +64,17 @@ pipeline {
 
         stage('Deploy to Production') {
             steps {
-                input message: 'Deploy to production?', ok: 'Deploy'
                 script {
+                    // Navigate to the directory containing docker-compose.yml
                     dir('./') {
-                        // Ensure to stop any running container for production before deploying
-                        bat """
-                            docker-compose -f docker-compose.production.yml down || true
-                            docker-compose -f docker-compose.production.yml up -d
-                        """
+                        // Run Docker Compose with production environment file
+                        bat 'docker-compose -f docker-compose.yml up'
                     }
                 }
             }
         }
     }
-
+    
     post {
         success {
             echo 'CI/CD pipeline succeeded!'
