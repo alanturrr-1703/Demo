@@ -1,9 +1,8 @@
 version: '3.8'
-
 services:
   app:
     image: alanturrr1703/demo-app:latest
     ports:
-      - "80:80"
+      - "8081:80"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=staging
