@@ -5,4 +5,4 @@ services:
     ports:
       - "80:80"
     environment:
-      - NODE_ENV=staging
+      - NODE_ENV
