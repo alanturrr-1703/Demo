@@ -55,7 +55,7 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-ssh', keyFileVariable: 'KEYFILE')]) {
                     bat '''
                         docker pull alanturrr1703/demo-app
-                        ssh -i %KEYFILE% user@staging-server "docker run -d -p 80:80 alanturrr1703/demo-app"
+                        ssh -i %KEYFILE% user@staging-server "docker run -p 80:80 alanturrr1703/demo-app"
                     '''
                 }
             }
@@ -67,7 +67,7 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'production-server-ssh', keyFileVariable: 'KEYFILE')]) {
                     bat '''
                         docker pull alanturrr1703/demo-app
-                        ssh -i %KEYFILE% user@production-server "docker run -d -p 80:80 alanturrr1703/demo-app"
+                        ssh -i %KEYFILE% user@production-server "docker run -p 80:80 alanturrr1703/demo-app"
                     '''
                 }
             }
