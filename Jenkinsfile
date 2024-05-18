@@ -56,7 +56,7 @@ pipeline {
                     // Navigate to the directory containing docker-compose.yml
                     dir('./') {
                         // Run Docker Compose with production environment file
-                        bat 'docker-compose --env-file .env.production up -d'
+                        bat 'docker-compose -f docker-compose.yml up'
                     }
                 }
             }
@@ -68,7 +68,7 @@ pipeline {
                     // Navigate to the directory containing docker-compose.yml
                     dir('./') {
                         // Run Docker Compose with production environment file
-                        bat 'docker-compose --env-file .env.production up -d'
+                        bat 'docker-compose -f docker-compose.yml up'
                     }
                 }
             }
