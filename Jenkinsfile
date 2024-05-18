@@ -41,10 +41,11 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                withCredentials([string(credentialsId: 'dockerhub-credentials', variable: 'DOCKERHUB_PASSWORD')]) {
-                    bat 'echo %DOCKERHUB_PASSWORD% | docker login -u alanturrr1703 --Harshit@1703 && echo "Docker login succeeded"'
-                    bat 'docker tag alanturrr1703/demo-app alanturrr1703/demo-app'
-                    bat 'docker push alanturrr1703/demo-app'
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
+                        bat 'docker tag alanturrr1703/demo-app alanturrr1703/demo-app'
+                        bat 'docker push alanturrr1703/demo-app'
+                    }
                 }
             }
         }
@@ -62,6 +63,7 @@ pipeline {
 
         stage('Deploy to Production') {
             steps {
+                input message: 'Deploy to production?', ok: 'Deploy'
                 withCredentials([sshUserPrivateKey(credentialsId: 'production-server-ssh', keyFileVariable: 'KEYFILE')]) {
                     bat '''
                         docker pull alanturrr1703/demo-app
